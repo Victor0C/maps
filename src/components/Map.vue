@@ -35,7 +35,7 @@
         },
 	    methods: {
 
-            //Inicializa o mapa
+            //Inicializa o mapa e emite um evento com um objeto dos dados
 	        async initMap(){
                 const { Geocoder } = await google.maps.importLibrary('geocoding');
 	            const { Map } = await google.maps.importLibrary('maps');
@@ -76,6 +76,8 @@
                                 lat: results[0].geometry.location.lat(),
                                 lng: results[0].geometry.location.lng()
                             };
+                            
+	                        this.extractAddressInfo(results[0].address_components);
 
                             if(this.markerReference) this.markerReference.position = this.coordinates
 
@@ -91,12 +93,11 @@
 	        async getAddress(){
 	            await this.geocoder.geocode({ location: this.coordinates }, (results, status) => {
 	                if (status === 'OK' && results[0]) {
-	                    const addressComponents = results[0].address_components;
-	                    this.extractAddressInfo(addressComponents);
-                       
-	                } else {
-                        this.mapError = true
-	                }
+                        this.extractAddressInfo(results[0].address_components);
+                        return
+	                } 
+
+                    this.mapError = true
 	            });
 	        },
 
@@ -134,9 +135,13 @@
                     if (component.types.includes('subpremise')) {
                     this.addressMap.complement = component.long_name;
                     }
-                });
 
-                this.$emit('addressMap', this.addressMap);
+                    this.emitMapData()
+                    
+                });
+            },
+            emitMapData(){
+                this.$emit('addressMap', {addressMap: this.addressMap, coordinates: this.coordinates});
             }
 	    },
 	}
