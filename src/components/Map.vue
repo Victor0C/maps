@@ -7,9 +7,11 @@
 	    name: 'Map',
 	    data() {
 	        return {
-	           geocoder: null,
-	           coordinates: { lat: 0, lng: 0 },
-               addressMap: {}
+                mapReference: null,
+                markerReference: null,
+                geocoder: null,
+	            coordinates: { lat: 0, lng: 0 },
+                addressMap: {}
 	        }
 	    },
 	    props:{
@@ -20,24 +22,30 @@
 	    },
         emits:['addressMap'],
 	    created() {
-	        this.initMap()
+	        this.initMap();
 	    },
+        watch: {
+           async address(newAddress) {
+                await this.getCoordinates()
+            }
+        },
 	    methods: {
 	        async initMap(){
-	            const { Geocoder } = await google.maps.importLibrary('geocoding');
+                const { Geocoder } = await google.maps.importLibrary('geocoding');
 	            const { Map } = await google.maps.importLibrary('maps');
                 const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
 	            this.geocoder = new Geocoder();
 
-                
 	            const map = new Map(document.getElementById('map'), {
                     zoom: 17,
 	                center: this.coordinates,
                     mapId:'MyMapID456778'
                     
 	            });
+
+                this.mapReference = map
                 
-                await this.getCoordinates(map)
+                await this.getCoordinates()
                
                 const marker = new AdvancedMarkerElement({
                     map,
@@ -45,22 +53,25 @@
                     gmpDraggable: true
                 });
                 
+                this.markerReference = marker
+                
                 marker.addListener('dragend', () => {
                     const position = marker.position;
                     this.coordinates = { lat: position.lat, lng: position.lng };
                     this.getAddress()
                 });
-                
 	        },
-	       async getCoordinates(map){
+	       async getCoordinates(){
 	            await this.geocoder.geocode({ address: this.address }, (results, status)=>{
 	                    if(status ==='OK' && results[0]){
                             this.coordinates = {
                                 lat: results[0].geometry.location.lat(),
                                 lng: results[0].geometry.location.lng()
                             };
-                            
-                            map.setCenter(this.coordinates);
+
+                            if(this.markerReference) this.markerReference.position = this.coordinates
+
+                            this.mapReference.setCenter(this.coordinates);
                             return
                         }
 
@@ -113,11 +124,8 @@
                     }
                 });
 
-                console.log(addressComponents);
-                console.log(this.addressMap);
                 this.$emit('addressMap', this.addressMap);
             }
-
 	    },
 	}
 </script>
