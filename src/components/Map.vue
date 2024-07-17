@@ -1,5 +1,8 @@
 <template>
-    <div id="map"></div>
+    <div v-if="mapError" class="mapError d-flex justify-content-center align-items-center">
+        <p class="text-danger fs-3">Falha ao encontrar o endereço no mapa...</p>
+    </div>
+    <div v-if="!mapError" id="map"></div>
 </template>
 
 <script>
@@ -11,7 +14,8 @@
                 markerReference: null,
                 geocoder: null,
 	            coordinates: { lat: 0, lng: 0 },
-                addressMap: {}
+                addressMap: {},
+                mapError: false
 	        }
 	    },
 	    props:{
@@ -30,6 +34,8 @@
             }
         },
 	    methods: {
+
+            //Inicializa o mapa
 	        async initMap(){
                 const { Geocoder } = await google.maps.importLibrary('geocoding');
 	            const { Map } = await google.maps.importLibrary('maps');
@@ -61,6 +67,8 @@
                     this.getAddress()
                 });
 	        },
+
+            //Busca as coordenadas pela string de endereço
 	       async getCoordinates(){
 	            await this.geocoder.geocode({ address: this.address }, (results, status)=>{
 	                    if(status ==='OK' && results[0]){
@@ -75,9 +83,11 @@
                             return
                         }
 
-	                    console.log('Deu erro:' + status)
+	                    this.mapError = true
 	            })
 	        },
+
+            //Busca o endereço pelas coordenadas
 	        async getAddress(){
 	            await this.geocoder.geocode({ location: this.coordinates }, (results, status) => {
 	                if (status === 'OK' && results[0]) {
@@ -85,10 +95,12 @@
 	                    this.extractAddressInfo(addressComponents);
                        
 	                } else {
-	                    console.error('Erro geocodeLatLng: ' + status);
+                        this.mapError = true
 	                }
 	            });
 	        },
+
+            //Organiza os dados do endereço retornado pela API do Google Maps e emite um evento com um objeto dos dados
             extractAddressInfo(addressComponents) {
                 addressComponents.forEach(component => {
                     if (component.types.includes('postal_code')) {
@@ -135,4 +147,9 @@
 		height: 400px;
 		width: 100%;
 	}
+    .mapError{
+        height: 400px;
+		width: 100%;
+        background-color: rgba(250, 30, 30, 0.062)
+    }
 </style>

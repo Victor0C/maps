@@ -78,9 +78,12 @@ import Map from '../components/Map.vue'
       Map
     },
 		methods: {
+      //Recupera os dados do endereço exibido no mapa
       getMapData(addressMap){
         this.addressMap = {...addressMap}
       },
+
+      //Somente para simular a api de cep que é utilizada na empresa
       async getCepData(){
         try {
           const response = await fetch(`https://viacep.com.br/ws/${this.address.cep}/json/`);
@@ -95,9 +98,11 @@ import Map from '../components/Map.vue'
           this.address.state = data.uf
         } 
         catch (error) {
-          console.error('Fetch error:', error);
+          console.error('Error ao buscar o cep:', error);
         }
-      },  
+      }, 
+
+      //Coloca o endereço numa string para buscar no mapa
       async buildAddressString(){
         await this.getCepData()
 
@@ -108,7 +113,6 @@ import Map from '../components/Map.vue'
           ${this.address.city},
           ${this.address.state},
           Brasil`;
- 
       }
 		},
 	};
