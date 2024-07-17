@@ -11,6 +11,8 @@
 	           coordinates: { lat: 0, lng: 0 },
                addressMap: {
                     cep: '',
+                    city:'',
+                    cep: '',
                     logradouro: '',
                     bairro: '',
                     numero: '',
@@ -84,28 +86,35 @@
 	                }
 	            });
 	        },
-	        extractAddressInfo(addressComponents) {
-	            addressComponents.forEach(component => {
-	                if (component.types.includes('postal_code')) {
-	                    this.addressMap.cep = component.long_name;
-	                }
-                    
-                    if (component.types.includes('route')) {
-	                    this.addressMap.logradouro = component.long_name;
-	                }
-                    
-                    if (component.types.includes('sublocality')) {
-	                    this.addressMap.bairro = component.long_name;
-	                } 
-                    
-                    if (component.types.includes('street_number')) {
-	                    this.addressMap.numero = component.long_name;
-	                }
-	            });
+            extractAddressInfo(addressComponents) {
+                addressComponents.forEach(component => {
+                    if (component.types.includes('postal_code')) {
+                    this.addressMap.cep = component.long_name;
+                    }
 
-                console.log({addressMap: this.addressMap, coordinatesMap: this.coordinates})
-                // this.$emit('addressMap', this.addressMap)
-	        },
+                    if (component.types.includes('locality') || component.types.includes('administrative_area_level_2')) {
+                    this.addressMap.city = component.long_name;
+                    }
+
+                    if (component.types.includes('route')) {
+                    this.addressMap.logradouro = component.long_name;
+                    }
+
+                    if (component.types.includes('sublocality') || component.types.includes('sublocality_level_1')) {
+                    this.addressMap.bairro = component.long_name;
+                    }
+
+                    if (component.types.includes('street_number')) {
+                    this.addressMap.numero = component.long_name;
+                    }
+
+                    if (component.types.includes('subpremise')) {
+                    this.addressMap.complemento = component.long_name;
+                    }
+                });
+
+                this.$emit('addressMap', this.addressMap);
+            }
 	    },
 	}
 </script>

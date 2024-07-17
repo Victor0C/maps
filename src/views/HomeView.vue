@@ -11,6 +11,24 @@
 					required />
 			</div>
 			<div class="mb-3">
+				<label for="logradouro" class="form-label">Cidade</label>
+				<input
+					type="text"
+					class="form-control"
+					id="logradouro"
+					v-model="address.city"
+					required />
+			</div>
+			<div class="mb-3">
+				<label for="logradouro" class="form-label">Estado</label>
+				<input
+					type="text"
+					class="form-control"
+					id="logradouro"
+					v-model="address.state"
+					required />
+			</div>
+			<div class="mb-3">
 				<label for="logradouro" class="form-label">Logradouro</label>
 				<input
 					type="text"
@@ -68,6 +86,8 @@ import Map from '../components/Map.vue'
 			return {
 				address: {
 					cep: '',
+          city:'',
+          state:'',
 					logradouro: '',
 					bairro: '',
 					numero: '',
