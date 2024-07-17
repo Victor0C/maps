@@ -73,7 +73,7 @@
 			</div>
 			<button type="submit" class="btn btn-primary">Enviar</button>
 		</form>
-    <Map address="169, Rua 31 de Março, Centro, Retirolândia, Bahia"></Map>		
+    <Map address="169, Rua 31 de Março, Centro, Retirolândia, Bahia" ></Map>		
 	</div>
 </template>
 
@@ -88,12 +88,13 @@ import Map from '../components/Map.vue'
 					cep: '',
           city:'',
           state:'',
-					logradouro: '',
-					bairro: '',
-					numero: '',
-					complemento: '',
-					referencia: '',
+					publicPlace: '',
+					neighborhood: '',
+					number: '',
+					complement: '',
+					reference: '',
 				},
+        addressString:''
 			};
 		},
     components:{
