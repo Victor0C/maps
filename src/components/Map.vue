@@ -31,13 +31,12 @@ export default {
         this.initMap();
     },
     watch: {
-        async address(newAddress) {
+        async address() {
             await this.getCoordinates()
         }
     },
     methods: {
-
-        //Inicializa o mapa e emite um evento com um objeto dos dados
+        //Initialize the map and emit an event with a data object
         async initMap() {
             const { Geocoder } = await google.maps.importLibrary('geocoding');
             const { Map } = await google.maps.importLibrary('maps');
@@ -70,7 +69,7 @@ export default {
             });
         },
 
-        //Busca as coordenadas pela string de endereço
+        //Search coordinates by address string
         async getCoordinates() {
             await this.geocoder.geocode({ address: this.address }, (results, status) => {
                 if (status === 'OK' && results[0]) {
@@ -91,7 +90,7 @@ export default {
             })
         },
 
-        //Busca o endereço pelas coordenadas
+        //Search the address by coordinates
         async getAddress() {
             await this.geocoder.geocode({ location: this.coordinates }, (results, status) => {
                 if (status === 'OK' && results[0]) {
@@ -103,7 +102,7 @@ export default {
             });
         },
 
-        //Organiza os dados do endereço retornado pela API do Google Maps e emite um evento com um objeto dos dados
+        //Organizes the address data returned by the Google Maps API and emits an event with a data object
         extractAddressInfo(addressComponents) {
             addressComponents.forEach(component => {
                 if (component.types.includes('postal_code')) {
@@ -155,7 +154,7 @@ export default {
     width: 100%;
 }
 
-.myContainer{
+.myContainer {
     height: 30rem;
     width: 70rem;
     position: relative;

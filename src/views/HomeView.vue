@@ -61,7 +61,7 @@ export default {
     Map
   },
   methods: {
-    //Recupera os dados do endereço exibido no mapa
+    //Retrieves address data displayed on the map
     getMapData(addressMap) {
       this.addressMap = { ...addressMap }
       this.addressWithCoordinate.address = { ...this.address }
@@ -69,7 +69,7 @@ export default {
 
     },
 
-    //Somente para simular a api de cep que é utilizada na empresa
+    //Only to simulate the CEP API that is used in the company
     async getCepData() {
       try {
         const response = await fetch(`https://viacep.com.br/ws/${this.address.cep}/json/`);
@@ -88,7 +88,7 @@ export default {
       }
     },
 
-    //Coloca o endereço numa string para buscar no mapa
+    //Put the address in a string to search on the map
     async buildAddressString() {
       await this.getCepData()
 
