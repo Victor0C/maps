@@ -104,46 +104,35 @@ export default {
 
         //Organizes the address data returned by the Google Maps API and emits an event with a data object
         extractAddressInfo(addressComponents) {
+            const mapping = {
+                'postal_code': 'cep',
+                'country': 'country',
+                'locality': 'city',
+                'administrative_area_level_2': 'city',
+                'administrative_area_level_1': 'state',
+                'route': 'publicPlace',
+                'sublocality': 'neighborhood',
+                'sublocality_level_1': 'neighborhood',
+                'street_number': 'number',
+                'subpremise': 'complement'
+            };
+
             addressComponents.forEach(component => {
-                if (component.types.includes('postal_code')) {
-                    this.addressMap.cep = component.long_name;
-                }
-
-                if (component.types.includes('country')) {
-                    this.addressMap.country = component.long_name;
-                }
-
-                if (component.types.includes('locality') || component.types.includes('administrative_area_level_2')) {
-                    this.addressMap.city = component.long_name;
-                }
-
-                if (component.types.includes('administrative_area_level_1')) {
-                    this.addressMap.state = component.long_name;
-                }
-
-                if (component.types.includes('route')) {
-                    this.addressMap.publicPlace = component.long_name;
-                }
-
-                if (component.types.includes('sublocality') || component.types.includes('sublocality_level_1')) {
-                    this.addressMap.neighborhood = component.long_name;
-                }
-
-                if (component.types.includes('street_number')) {
-                    this.addressMap.number = component.long_name;
-                }
-
-                if (component.types.includes('subpremise')) {
-                    this.addressMap.complement = component.long_name;
-                }
+                component.types.forEach(type => {
+                    if (mapping[type]) {
+                        this.addressMap[mapping[type]] = component.long_name;
+                    }
+                });
 
                 this.emitMapData()
-
             });
         },
+        
+        //Emits an event with map data in an object
         emitMapData() {
             this.$emit('addressMap', { addressMap: this.addressMap, coordinates: this.coordinates });
         }
+
     },
 }
 </script>
